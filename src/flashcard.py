@@ -1,5 +1,4 @@
 import re
-import difflib
 from pathlib import Path
 from helpers import *
 from rich.panel import Panel
