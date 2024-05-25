@@ -51,7 +51,7 @@ class Menu:
     def show_menu_to_view_incorrect():
         options = ["yes", "no"]
         clear_screen()
-        print("Study incorect flashcards only?")
+        print("Study incorrect flashcards only?")
         terminal_menu = TerminalMenu(options, menu_cursor_style=("fg_cyan", "bold"), menu_highlight_style=("fg_cyan", "bold"))
         menu_entry_index = terminal_menu.show()
         return options[menu_entry_index]

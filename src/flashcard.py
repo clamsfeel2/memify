@@ -12,9 +12,11 @@ class Flashcard:
     flashcards = []
     file = None
 
-    def __init__(self, question, answer):
+    def __init__(self, question, answer, no_incorrect_cards = False, chose_incorrect = False):
         self.question = question
         self.answer = answer
+        self.no_incorrect_cards = no_incorrect_cards
+        self.chose_incorrect = chose_incorrect
 
     def parse_markdown(self, filename):
         self.file = filename
@@ -51,6 +53,7 @@ class Flashcard:
         incorrect_file_path = full_path_to_incorrect_sets + "/" + incorrect_file_name
         if len(self.incorrect_answers) == 0 and os.path.isfile(incorrect_file_path):
             none_incorrect = True
+            self.no_incorrect_cards = True
             os.remove(incorrect_file_path)
         # If the path {Flashcard_dir}/{.incorrect}/{Class_dir} does not exist create it
         # mkdirs acts like -P flag in mkdir command
@@ -68,7 +71,6 @@ class Flashcard:
                     # Check if the question and answer pair already exist in the file
                     if any(quest in line and ans in line for line in existing_data):
                         continue
-
                     out_file.write(quest + "\n" + ans + "\n")
         self.incorrect_answers = [] # Reset incorrect cards so no multiples appear
 
@@ -136,10 +138,9 @@ class Flashcard:
         wanna_play = True
         to_expand = True
         total_flashcards = len(self.flashcards)
-        total_questions = len(self.flashcards)
         console = Console()
         print("\033c", end='')
-        console.print(Text(f"\nWelcome to the Flashcard Quiz! There are {total_questions} questions.\n"), justify="center", style="deep_sky_blue1")
+        console.print(Text(f"\nWelcome to the Flashcard Quiz! There are {total_flashcards} questions.\n"), justify="center", style="deep_sky_blue1")
 
         while wanna_play: 
             num_correct = 0
@@ -183,11 +184,15 @@ class Flashcard:
             console.print(Text("\nQuiz completed!"), justify="center", style="bold spring_green1")
             content = (f"Number of correct answers: {num_correct}\n" + f"Number of incorrect answers: {num_wrong}")
             console.print(Panel(content, title="Results", border_style="bold blue", expand=to_expand))
-            console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
             self.output_incorrect_cards()
-            # Gets user input, if they press enter they wanna quiz again
-            user_answer = getch()
-            if user_answer == "\r":
-                wanna_play = True
-            else:
+            if self.no_incorrect_cards and self.chose_incorrect:
+                console.print(Text("\nYou have no more incorrect flashcards!\n"), justify="center", style="bold spring_green1")
                 wanna_play = False
+            else:
+                # Gets user input, if they press enter they wanna quiz again
+                console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
+                user_answer = getch()
+                if user_answer == "\r":
+                    wanna_play = True
+                else:
+                    wanna_play = False

@@ -5,10 +5,11 @@ import sys
 
 # This is kinda overkill I think...
 def is_num(x):
-    # Removes neg sign and decimal
-    without_sign = x.lstrip('-')
-    without_decimal = without_sign.replace('.', '', 1)
-    return without_decimal.isnumeric()
+    try:
+        float(x)
+        return True
+    except ValueError:
+        return False
 
 ### MANIPULATING SCREEN AND INPUT ###
 def clear_screen():

@@ -29,7 +29,10 @@ if __name__ == "__main__":
         else:
             directory = args.directory
 
-        flcd = Flashcard("", "")
+        basename = os.path.basename(os.path.dirname(os.path.dirname(directory)))
+        flcd = Flashcard("", "", False, False)
+        if basename == ".incorrect":
+            flcd.chose_incorrect = True
         flcd.parse_markdown(directory)
         if args.study:
             flcd.flashcard_study()
