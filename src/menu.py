@@ -12,7 +12,7 @@ class Menu:
 
     @classmethod
     def show_menu(cls, directory):
-        selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and not d.startswith('.')], "Select a class")
+        selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and not d.startswith(".")], "Select a class")
         if selected_class:
             selected_set = cls.select_set_to_study(os.path.join(directory, selected_class))
             if selected_set:
@@ -21,8 +21,8 @@ class Menu:
 
     @staticmethod
     def select_set_to_study(directory):
-        selected_file_path = ""
-        incorrect_file_path = ""
+        selected_file_path = None
+        incorrect_file_path = None
         diff_sets = {}
         for file in os.listdir(directory):
             if file.endswith(".md"):

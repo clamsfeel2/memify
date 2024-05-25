@@ -20,12 +20,12 @@ class Flashcard:
 
     def parse_markdown(self, filename):
         self.file = filename
-        with open(self.file, 'r', encoding='utf-8') as file:
+        with open(self.file, "r", encoding="utf-8") as file:
             markdown_text = file.read()
         current_question = None
         current_answer = None
-        for line in markdown_text.split('\n'):
-            match = re.match(r'^(#+)\s+(.*)', line)
+        for line in markdown_text.split("\n"):
+            match = re.match(r"^(#+)\s+(.*)", line)
             if match:
                 level = len(match.group(1))
                 title = match.group(2)
@@ -40,31 +40,27 @@ class Flashcard:
     def output_incorrect_cards(self):
         fullpath_to_classes = os.path.dirname(os.path.dirname(self.file))
         existing_data = []
-        none_incorrect = False
 
         if os.path.basename(fullpath_to_classes) == ".incorrect":
             fullpath_to_classes = os.path.dirname(fullpath_to_classes)
         file_name = os.path.basename(self.file)
-        fullpath_w_filename = self.file
-        basename = os.path.basename(os.path.dirname(fullpath_w_filename))
-        full_path_to_incorrect_sets = fullpath_to_classes + "/.incorrect/" + basename
-        full_path_to_incorrect_file = full_path_to_incorrect_sets + "/" + file_name if file_name.startswith("incorrect_") else "incorrect_" + file_name
+        full_path_to_incorrect_sets = fullpath_to_classes + "/.incorrect/" + os.path.basename(os.path.dirname(self.file))
+
         incorrect_file_name = file_name if file_name.startswith("incorrect_") else "incorrect_" + file_name
         incorrect_file_path = full_path_to_incorrect_sets + "/" + incorrect_file_name
         if len(self.incorrect_answers) == 0 and os.path.isfile(incorrect_file_path):
-            none_incorrect = True
             self.no_incorrect_cards = True
             os.remove(incorrect_file_path)
         # If the path {Flashcard_dir}/{.incorrect}/{Class_dir} does not exist create it
-        # mkdirs acts like -P flag in mkdir command
+            # mkdirs acts like -P flag in mkdir command
         if not os.path.isdir(full_path_to_incorrect_sets):
             os.makedirs(full_path_to_incorrect_sets)
-        if not none_incorrect:
+        if not self.no_incorrect_cards:
             if os.path.isfile(incorrect_file_path):
-                with open(incorrect_file_path, "r") as in_file:
+                with open(incorrect_file_path, "r", encoding="utf8") as in_file:
                     existing_data = in_file.readlines()
 
-            with open(incorrect_file_path, "w") as out_file:
+            with open(incorrect_file_path, "w", encoding="utf-8") as out_file:
                 for card in self.incorrect_answers:
                     quest = "# " + card.question
                     ans = "## " + str(card.answer)
@@ -132,14 +128,14 @@ class Flashcard:
             else:
                 wanna_play = False
                 clear_screen()
-                print("\033[H", end='') # Move cursor back to top left of window
+                print("\033[H", end="") # Move cursor back to top left of window
 
     def flashcard_quiz(self):
         wanna_play = True
         to_expand = True
         total_flashcards = len(self.flashcards)
         console = Console()
-        print("\033c", end='')
+        print("\033c", end="")
         console.print(Text(f"\nWelcome to the Flashcard Quiz! There are {total_flashcards} questions.\n"), justify="center", style="deep_sky_blue1")
 
         while wanna_play: 

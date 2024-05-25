@@ -13,10 +13,10 @@ def is_num(x):
 
 ### MANIPULATING SCREEN AND INPUT ###
 def clear_screen():
-    print("\033c", end='')
+    print("\033c", end="")
 
 def hide_cursor():
-    print('\033[?25l', end="")
+    print("\033[?25l", end="")
 
 def move_cursor_to_middle_of_screen():
     terminal_size = os.get_terminal_size()
@@ -26,7 +26,7 @@ def move_cursor_to_middle_of_screen():
     vertical_position = terminal_height // 2
     horizontal_position = terminal_width // 2
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{horizontal_position};{vertical_position}", end='')
+    print(f"\033[{horizontal_position};{vertical_position}", end="")
 
 def move_cursor_to_left_middle():
     terminal_size = os.get_terminal_size()
@@ -34,7 +34,7 @@ def move_cursor_to_left_middle():
     # Calculate the position for the cursor
     vertical_position = terminal_height // 2
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{vertical_position};0H", end='')
+    print(f"\033[{vertical_position};0H", end="")
 
 def getch():
     fd = sys.stdin.fileno()
@@ -43,7 +43,7 @@ def getch():
         tty.setraw(fd)
         ch = sys.stdin.read(1)
         # Check if Ctrl+C was pressed
-        if ch == '\x03':
+        if ch == "\x03":
             return None
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
