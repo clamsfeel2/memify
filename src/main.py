@@ -35,6 +35,6 @@ if __name__ == "__main__":
             flcd.flashcard_study()
         elif args.quiz:
             flcd.flashcard_quiz()
-    except (KeyboardInterrupt): # Catches Ctrl+C does not catch SIGINT, but good enough for now
+    except (KeyboardInterrupt): # Catches Ctrl+C doesn't quite catch SIGINT, but good enough for now
         clear_screen()
         sys.exit(130)

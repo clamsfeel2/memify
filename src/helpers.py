@@ -5,13 +5,10 @@ import sys
 
 # This is kinda overkill I think...
 def is_num(x):
-    # Removes neg sign and decimal -- don't need values, literally just checking if the value is a number
+    # Removes neg sign and decimal
     without_sign = x.lstrip('-')
     without_decimal = without_sign.replace('.', '', 1)
-    if without_decimal.isnumeric():
-        return True
-    else:
-        return False
+    return without_decimal.isnumeric()
 
 ### MANIPULATING SCREEN AND INPUT ###
 def clear_screen():
@@ -28,7 +25,7 @@ def move_cursor_to_middle_of_screen():
     vertical_position = terminal_height // 2
     horizontal_position = terminal_width // 2
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{horizontal_position};{vertical_position}", end='') 
+    print(f"\033[{horizontal_position};{vertical_position}", end='')
 
 def move_cursor_to_left_middle():
     terminal_size = os.get_terminal_size()
@@ -36,7 +33,7 @@ def move_cursor_to_left_middle():
     # Calculate the position for the cursor
     vertical_position = terminal_height // 2
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{vertical_position};0H", end='') 
+    print(f"\033[{vertical_position};0H", end='')
 
 def getch():
     fd = sys.stdin.fileno()
@@ -51,8 +48,9 @@ def getch():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
-### STRINGS AND NUMS ###
+### DIFFS IN STRS AND NUMS ###
 def check_differences(input1, input2):
+    """Checks if string or number is different than answer"""
     diff_count = 0
     if isinstance(input1, str) and isinstance(input2, str):
         if len(input1) != len(input2):
@@ -61,7 +59,7 @@ def check_differences(input1, input2):
             if char1.lower() != char2.lower():
                 diff_count += 1
         return diff_count == 1
-    elif isinstance(input1, (int, float)) and isinstance(input2, (int, float)):
+    if isinstance(input1, (int, float)) and isinstance(input2, (int, float)):
         if abs(input1 - input2) <= 3:
             return True
     return False

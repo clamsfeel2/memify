@@ -21,6 +21,8 @@ class Menu:
 
     @staticmethod
     def select_set_to_study(directory):
+        selected_file_path = ""
+        incorrect_file_path = ""
         diff_sets = {}
         for file in os.listdir(directory):
             if file.endswith(".md"):
