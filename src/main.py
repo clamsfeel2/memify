@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
         if not (args.study or args.quiz):
             print("memify: missing operand")
-            print("   usage: memify [-h] [-s] [-q] [-d DIRECTORY]")
+            print("   usage: memify [-h] [-s] [-q] [-f FILEPATH]")
             sys.exit(1)
 
         clear_screen()

@@ -81,6 +81,8 @@ USAGE: memify [flag]
 -h, --help            show this help message and exit
 -s, --study           choose a flashcard set to study.
 -q, --quiz            choose a flashcard set to quiz yourself on.
+-f FILEPATH, --filepath FILEPATH
+                      specify full path to file which holds a set.
 ```
 
 ## Roadmap
