@@ -88,7 +88,6 @@ class Flashcard:
         i = 0
         show_commands = True
         while wanna_play:
-            # for i in range(total_flashcards):
             while i < total_flashcards:
                 key = None
                 if key == "q" or key == "Q":
@@ -105,7 +104,8 @@ class Flashcard:
                     panel = Panel(center_text, title=panel_title, subtitle = panel_subtitle, title_align="left", subtitle_align="right", border_style=border_color, width=50, expand=to_expand)
                     console.print(Align.center(panel))
                     if show_commands:
-                        console.print(Align.center("COMMANDS (toggle with 'c')", style="turquoise2"))
+                        console.print(Align.center("COMMANDS", style="bold turquoise2"))
+                        console.print(Align.center("'c' to toggle this menu", style="turquoise2"))
                         console.print(Align.center("'any key' to flip the flashcard", style="turquoise2"))
                         console.print(Align.center("'enter' to go to the next card", style="turquoise2"))
                         console.print(Align.center("'b' to go to the previous card", style="turquoise2"))
