@@ -41,3 +41,5 @@ if __name__ == "__main__":
     except (KeyboardInterrupt): # Catches Ctrl+C doesn't quite catch SIGINT, but good enough for now
         clear_screen()
         sys.exit(130)
+    finally:
+        print("\x1b[?25h", end="")  # Makes sure to always restore the cursor no matter what

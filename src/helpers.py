@@ -13,10 +13,10 @@ def is_num(x):
 
 ### MANIPULATING SCREEN AND INPUT ###
 def clear_screen():
-    print("\033c", end="")
+    print("\x1bc", end="", flush=True)
 
 def hide_cursor():
-    print("\033[?25l", end="")
+    print("\x1b[?25l", end="", flush=True)
 
 def move_cursor_to_middle_of_screen():
     terminal_size = os.get_terminal_size()
@@ -26,7 +26,7 @@ def move_cursor_to_middle_of_screen():
     vertical_position = terminal_height // 2
     horizontal_position = terminal_width // 2
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{horizontal_position};{vertical_position}", end="")
+    print(f"\x1b[{horizontal_position};{vertical_position}", end="", flush=True)
 
 def move_cursor_to_left_middle(value_to_move_down_by = 0):
     terminal_size = os.get_terminal_size()
@@ -34,7 +34,7 @@ def move_cursor_to_left_middle(value_to_move_down_by = 0):
     # Calculate the position for the cursor
     vertical_position = (terminal_height // 2) + value_to_move_down_by
     # Move cursor to the middle of the screen on the farthest left side
-    print(f"\033[{vertical_position};0H", end="")
+    print(f"\x1b[{vertical_position};0H", end="", flush=True)
 
 def getch():
     fd = sys.stdin.fileno()

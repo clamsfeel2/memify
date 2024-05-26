@@ -38,37 +38,40 @@ class Flashcard:
                     current_answer = None
 
     def output_incorrect_cards(self):
-        fullpath_to_classes = os.path.dirname(os.path.dirname(self.file))
+        """Outputs incorrect cards into .incorrect directory 
+        located in root dir used for classes"""
         existing_data = []
-
+        fullpath_to_classes = os.path.dirname(os.path.dirname(self.file))
+        file_name = os.path.basename(self.file)
+        incorrect_file_name = file_name if file_name.startswith("incorrect_") else "incorrect_" + file_name
         if os.path.basename(fullpath_to_classes) == ".incorrect":
             fullpath_to_classes = os.path.dirname(fullpath_to_classes)
-        file_name = os.path.basename(self.file)
-        full_path_to_incorrect_sets = fullpath_to_classes + "/.incorrect/" + os.path.basename(os.path.dirname(self.file))
-
-        incorrect_file_name = file_name if file_name.startswith("incorrect_") else "incorrect_" + file_name
-        incorrect_file_path = full_path_to_incorrect_sets + "/" + incorrect_file_name
-        if len(self.incorrect_answers) == 0 and os.path.isfile(incorrect_file_path):
+        full_path_to_incorrect_sets = os.path.join(fullpath_to_classes, ".incorrect", os.path.basename(os.path.dirname(self.file)))
+        incorrect_file_path = os.path.join(full_path_to_incorrect_sets, incorrect_file_name)
+        # Check if there are any incorrect answers to process
+        if len(self.incorrect_answers) == 0:
+            # If there are no incorrect answers check if incorrect file is there and remove it
+            if os.path.isfile(incorrect_file_path):
+                os.remove(incorrect_file_path)
             self.no_incorrect_cards = True
-            os.remove(incorrect_file_path)
-        # If the path {Flashcard_dir}/{.incorrect}/{Class_dir} does not exist create it
-            # mkdirs acts like -P flag in mkdir command
+            return
+        # Check that the directory structure exists
         if not os.path.isdir(full_path_to_incorrect_sets):
             os.makedirs(full_path_to_incorrect_sets)
-        if not self.no_incorrect_cards:
-            if os.path.isfile(incorrect_file_path):
-                with open(incorrect_file_path, "r", encoding="utf8") as in_file:
-                    existing_data = in_file.readlines()
 
-            with open(incorrect_file_path, "w", encoding="utf-8") as out_file:
-                for card in self.incorrect_answers:
-                    quest = "# " + card.question
-                    ans = "## " + str(card.answer)
-                    # Check if the question and answer pair already exist in the file
-                    if any(quest in line and ans in line for line in existing_data):
-                        continue
-                    out_file.write(quest + "\n" + ans + "\n")
-        self.incorrect_answers = [] # Reset incorrect cards so no multiples appear
+        if os.path.isfile(incorrect_file_path):
+            with open(incorrect_file_path, "r", encoding="utf8") as in_file:
+                existing_data = in_file.readlines()
+
+        with open(incorrect_file_path, "w", encoding="utf-8") as out_file:
+            for card in self.incorrect_answers:
+                quest = "# " + card.question
+                ans = "## " + str(card.answer)
+                # Check if the question and answer pair already exist in the file
+                if any(quest in line and ans in line for line in existing_data):
+                    continue
+                out_file.write(quest + "\n" + ans + "\n")
+        self.incorrect_answers = []
 
     # TODO: Clean this function tf up
     def flashcard_study(self):
@@ -112,8 +115,7 @@ class Flashcard:
                         console.print(Align.center("'q' to quit", style="turquoise2"))
                     else:
                         # move_cursor_to_left_middle(3)
-                        sys.stdout.write("\033[J") # Clears from cursor to bottom of screen
-                        sys.stdout.flush()
+                        print("\x1b[J", end="", flush=True) # Clears from cursor to bottom of screen
                     key = getch()
                     if key is None:
                         raise KeyboardInterrupt
@@ -149,14 +151,14 @@ class Flashcard:
             else:
                 wanna_play = False
                 clear_screen()
-                print("\033[H", end="") # Move cursor back to top left of window
+                print("\x1b[H", end="", flush=True) # Move cursor back to top left of window
 
     def flashcard_quiz(self):
         wanna_play = True
         to_expand = True
         total_flashcards = len(self.flashcards)
         console = Console()
-        print("\033c", end="")
+        clear_screen()
         console.print(Text(f"\nWelcome to the Flashcard Quiz! There are {total_flashcards} questions.\n"), justify="center", style="deep_sky_blue1")
 
         while wanna_play: 
@@ -171,8 +173,8 @@ class Flashcard:
                     panel = Panel(center_text, title=panel_title, title_align="left", subtitle_align="right", border_style="bold blue", width=50, expand=to_expand)
                     console.print(Align.center(panel))
 
-                    console.print(Text("Your answer\033[s"), justify="center", end=""); # \033[s saves cursor pos
-                    user_answer = input("\033[u: ").strip().lower() # \033[u restores cursor pos so I can have the input in the middle of screen!
+                    console.print(Text("Your answer\x1b[s"), justify="center", end=""); # \x1b[s saves cursor pos
+                    user_answer = input("\x1b[u: ").strip().lower() # \x1b[u restores cursor pos so I can have the input in the middle of screen!
 
                     everything_is_num = is_num(user_answer) and is_num(card.answer)
                     if everything_is_num:
@@ -206,6 +208,7 @@ class Flashcard:
                 console.print(Text("\nYou have no more incorrect flashcards!\n"), justify="center", style="bold spring_green1")
                 wanna_play = False
             else:
+                hide_cursor()
                 # Gets user input, if they press enter they wanna quiz again
                 console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
                 user_answer = getch()
