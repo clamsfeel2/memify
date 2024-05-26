@@ -30,7 +30,7 @@ Flashcards
 > You **must** set `FLASHCARD_SETS_PATH` environment variable to the full path to your sets.
 > So for above `FLASHCARD_SETS_PATH` would be set as the full path to `Flashcards`.
 
-Any file ending with `.md` will be considered a set, and if there is more than 1 set, `memify` will prompt you to choose a set to use. 
+Any file ending with `.md` will be considered a set, and `memify` will prompt you to choose a set to use. 
 
 **If a file does not end in `.md` it will be ignored.**
 
