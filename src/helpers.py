@@ -28,11 +28,11 @@ def move_cursor_to_middle_of_screen():
     # Move cursor to the middle of the screen on the farthest left side
     print(f"\033[{horizontal_position};{vertical_position}", end="")
 
-def move_cursor_to_left_middle():
+def move_cursor_to_left_middle(value_to_move_down_by = 0):
     terminal_size = os.get_terminal_size()
     terminal_height = terminal_size.lines
     # Calculate the position for the cursor
-    vertical_position = terminal_height // 2
+    vertical_position = (terminal_height // 2) + value_to_move_down_by
     # Move cursor to the middle of the screen on the farthest left side
     print(f"\033[{vertical_position};0H", end="")
 

@@ -70,6 +70,7 @@ class Flashcard:
                     out_file.write(quest + "\n" + ans + "\n")
         self.incorrect_answers = [] # Reset incorrect cards so no multiples appear
 
+    # TODO: Clean this function tf up
     def flashcard_study(self):
         to_expand = True
         show_question = True
@@ -84,14 +85,18 @@ class Flashcard:
         console.print(Align.center("Time to study some flashcards!", style="medium_purple"))
         console.print(Align.center(f"[medium_purple underline]There are {total_flashcards} flashcards.[/medium_purple underline]"))
         console.print(Align.center(f"[medium_purple underline]Press q to quit.[/medium_purple underline]"))
+        i = 0
+        show_commands = True
         while wanna_play:
-            for i in range(total_flashcards):
+            # for i in range(total_flashcards):
+            while i < total_flashcards:
                 key = None
                 if key == "q" or key == "Q":
                     return
-                card = self.flashcards[i]
                 show_question = True
-                while True:
+                loop_over_one_card = True
+                while loop_over_one_card:
+                    card = self.flashcards[i]
                     center_text = Text(card.question if show_question else card.answer, justify="center")
                     move_cursor_to_left_middle()
                     panel_title = f"Flashcard {i+1} of {total_flashcards}"
@@ -99,14 +104,31 @@ class Flashcard:
                     border_color = "bold blue" if show_question else "bold pale_violet_red1"
                     panel = Panel(center_text, title=panel_title, subtitle = panel_subtitle, title_align="left", subtitle_align="right", border_style=border_color, width=50, expand=to_expand)
                     console.print(Align.center(panel))
-                    console.print(Align.center("Press 'any key' to flip the flashcard, 'enter' to go to the next one, or 'q' to quit", style="turquoise2"))
+                    if show_commands:
+                        console.print(Align.center("COMMANDS (toggle with 'c')", style="turquoise2"))
+                        console.print(Align.center("'any key' to flip the flashcard", style="turquoise2"))
+                        console.print(Align.center("'enter' to go to the next card", style="turquoise2"))
+                        console.print(Align.center("'b' to go to the previous card", style="turquoise2"))
+                        console.print(Align.center("'q' to quit", style="turquoise2"))
+                    else:
+                        # move_cursor_to_left_middle(3)
+                        sys.stdout.write("\033[J") # Clears from cursor to bottom of screen
+                        sys.stdout.flush()
                     key = getch()
                     if key is None:
                         raise KeyboardInterrupt
-                    if key == "\r":
+
+                    if key in {"c", "C"}:
+                        show_commands = not show_commands
+                    elif key == "\r":
                         clear_screen()
                         hide_cursor()
-                        break
+                        i += 1
+                        loop_over_one_card = not loop_over_one_card
+                    elif key in {"b", "B"}:
+                        if i > 0:
+                            i -= 1
+                            loop_over_one_card = not loop_over_one_card
                     elif key in {"q", "Q"}:
                         clear_screen()
                         hide_cursor()
@@ -115,7 +137,6 @@ class Flashcard:
                         clear_screen()
                         hide_cursor()
                         show_question = not show_question
-
             clear_screen()
             hide_cursor()
             move_cursor_to_left_middle()
