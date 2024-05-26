@@ -18,8 +18,8 @@ In order for `memify` to work you must have a parent directory that holds each c
 
 ```bash
 Flashcards
-├── Calc
-│   └── calc.md
+├── Math
+│   └── notes.md
 ├── CS
 │   └── bash_test_cmd.md
 └── English
