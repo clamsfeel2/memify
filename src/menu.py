@@ -4,8 +4,9 @@ from helpers import clear_screen
 
 class Menu:
     @staticmethod
-    def select_option(options, message):
-        print(message)
+    def select_option(options, message, to_print = True):
+        if to_print:
+            print(message)
         terminal_menu = TerminalMenu(options, menu_cursor_style=("fg_cyan", "bold"), menu_highlight_style=("fg_cyan", "bold"))
         menu_entry_index = terminal_menu.show()
         return options[menu_entry_index] if isinstance(menu_entry_index, int) else None
@@ -13,6 +14,13 @@ class Menu:
     @classmethod
     def show_menu(cls, directory):
         selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and not d.startswith(".")], "Select a class")
+        fullclass_path = os.path.join(directory, selected_class)
+        while len(os.listdir(fullclass_path)) == 0:
+            clear_screen()
+            print(f"\x1b[1;31mYou have no sets in {selected_class}!\n\x1b[0mPlease pick again.")
+            selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and not d.startswith(".")], "Select a class", False)
+            fullclass_path = os.path.join(directory, selected_class)
+
         if selected_class:
             selected_set = cls.select_set_to_study(os.path.join(directory, selected_class))
             if selected_set:
