@@ -56,6 +56,8 @@ def check_differences(input1, input2):
     if isinstance(input1, str) and isinstance(input2, str):
         if len(input1) != len(input2):
             return False  # Different length strings cannot have one letter off
+        input1 = input1.lower()
+        input2 = input2.lower()
         for char1, char2 in zip(input1, input2):
             if char1.lower() != char2.lower():
                 diff_count += 1

@@ -176,6 +176,7 @@ class Flashcard:
                     console.print(Text("Your answer\x1b[s"), justify="center", end=""); # \x1b[s saves cursor pos
                     user_answer = input("\x1b[u: ").strip().lower() # \x1b[u restores cursor pos so I can have the input in the middle of screen!
 
+                    og_answer = card.answer;
                     everything_is_num = is_num(user_answer) and is_num(card.answer)
                     if everything_is_num:
                         user_answer = int(user_answer)
@@ -196,7 +197,7 @@ class Flashcard:
                             console.print(Text("\nOnly one letter is wrong! Try again"), justify="center", style="bold red")
                     else:
                         console.print(Text(f"❌"), justify="center", style="bold red")
-                        console.print(Text(f"The correct answer is, {card_answer}"), justify="center", style="bold red")
+                        console.print(Text(f"The correct answer is, \"{og_answer}\""), justify="center", style="bold red")
                         self.incorrect_answers.append(Flashcard(card.question, card_answer))
                         num_wrong += 1
                         answered_correctly = True
