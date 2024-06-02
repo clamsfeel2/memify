@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import random
 from helpers import is_num, clear_screen, hide_cursor, move_cursor_to_middle_of_screen, move_cursor_to_left_middle, getch, check_differences
 from rich.panel import Panel
 from rich.console import Console
@@ -19,7 +20,12 @@ class Flashcard:
         self.chose_incorrect = chose_incorrect
 
     def parse_markdown(self, filename):
+        """Parses markdown file and randomizes the order of 
+        cards within a set"""
         self.file = filename
+        tmp_flashcards = []
+        tmp_question = None
+        tmp_answer = None
         with open(self.file, "r", encoding="utf-8") as file:
             markdown_text = file.read()
         current_question = None
@@ -29,13 +35,23 @@ class Flashcard:
             if match:
                 level = len(match.group(1))
                 title = match.group(2)
+                title = title.replace("\\n", "\n")
                 if level == 1:
                     current_question = title
                 elif level == 2:
                     current_answer = title
                 if current_answer and current_question:
-                    self.flashcards.append(Flashcard(current_question, current_answer))
-                    current_answer = None
+                    if re.match(r"^FIRST_CARD", current_question):
+                        current_question = re.sub(r"^FIRST_CARD ", "", current_question)
+                        tmp_question = current_question
+                        tmp_answer = current_answer
+                    else:
+                        tmp_flashcards.append(Flashcard(current_question, current_answer))
+                        current_answer = None
+        random.shuffle(tmp_flashcards)
+        if tmp_question and tmp_answer:
+            tmp_flashcards.insert(0, Flashcard(tmp_question, tmp_answer))
+        self.flashcards.extend(tmp_flashcards)
 
     def output_incorrect_cards(self):
         """Outputs incorrect cards into .incorrect directory 
@@ -99,12 +115,12 @@ class Flashcard:
                 loop_over_one_card = True
                 while loop_over_one_card:
                     card = self.flashcards[i]
-                    center_text = Text(card.question if show_question else card.answer, justify="center")
+                    card_details_text = Text(card.question if show_question else card.answer) # justify="center" to center align text
                     move_cursor_to_left_middle()
                     panel_title = f"Flashcard {i+1} of {total_flashcards}"
                     panel_subtitle = f"Question" if show_question else "Answer"
                     border_color = "bold blue" if show_question else "bold pale_violet_red1"
-                    panel = Panel(center_text, title=panel_title, subtitle = panel_subtitle, title_align="left", subtitle_align="right", border_style=border_color, width=50, expand=to_expand)
+                    panel = Panel(card_details_text, title=panel_title, subtitle = panel_subtitle, title_align="left", subtitle_align="right", border_style=border_color, width=50, expand=to_expand)
                     console.print(Align.center(panel))
                     if show_commands:
                         console.print(Align.center("COMMANDS", style="bold turquoise2"))
@@ -168,9 +184,9 @@ class Flashcard:
             for i, card in enumerate(self.flashcards, start=1):
                 answered_correctly = False
                 while not answered_correctly:  # Loop until the user answers correctly or quits
-                    center_text = Text(card.question, justify="center")
+                    card_details_text = Text(card.question)
                     panel_title = f"Flashcard {i} of {total_flashcards}"
-                    panel = Panel(center_text, title=panel_title, title_align="left", subtitle_align="right", border_style="bold blue", width=50, expand=to_expand)
+                    panel = Panel(card_details_text, title=panel_title, title_align="left", subtitle_align="right", border_style="bold blue", width=50, expand=to_expand)
                     console.print(Align.center(panel))
 
                     console.print(Text("Your answer\x1b[s"), justify="center", end=""); # \x1b[s saves cursor pos

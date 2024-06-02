@@ -74,6 +74,15 @@ other text
 ## Paris
 ```
 
+`memify` will always randomize the cards within your sets. If you want a set to **always** start with a certain card for instructions or whatever reason begin the question with `FIRST_CARD` for example
+
+```bash
+# FIRST_CARD What is the capital of France?
+## Paris
+```
+
+If you want to insert a newline in your output you may use `\n`. `memify` is not yet regex compliant, but it understands `\n`.
+
 ## Usage
 
 ```bash
