@@ -13,7 +13,7 @@ class Menu:
 
     @classmethod
     def show_menu(cls, directory):
-        selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and not d.startswith(".")], "Select a class")
+        selected_class = cls.select_option([d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and any(os.listdir(os.path.join(directory, d))) and not d.startswith(".")], "Select a class")
         fullclass_path = os.path.join(directory, selected_class)
         while len(os.listdir(fullclass_path)) == 0:
             clear_screen()
