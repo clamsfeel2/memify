@@ -6,19 +6,21 @@ A simple to use flashcard command-line program.
 
 </div>
 
-# Getting Started
+## Sections
 
+- [Why](#why)
 - [Setup](#setup)
 - [Formatting Your Flashcards](#formatting-your-flashcards)
 - [Formatting Output](#formatting-output)
 
-## Why?
+### Why?
 
 - I started to get frustrated with how long it would take me to setup a Quizlet set, or kept losing my handwritten flashcards.
   - really just wanted a **super simple** flashcard program that allowed me to create sets and study the sets with minimal effort. After all, shouldn't that effort be used for the actual studying?!
 - I didn't know a thing about Python and wanted to learn. The codebase is very messy because of this...
 - Why publish?
   - My sister saw me using it and wanted access. :p
+
 
 ## Setup
 
