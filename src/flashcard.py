@@ -1,5 +1,6 @@
 import re
 import os
+import shutil
 import sys
 import random
 from helpers import is_num, clear_screen, hide_cursor, move_cursor_to_middle_of_screen, move_cursor_to_left_middle, getch, check_differences
@@ -19,13 +20,20 @@ class Flashcard:
         self.no_incorrect_cards = no_incorrect_cards
         self.chose_incorrect = chose_incorrect
 
+    def apply_rich_format(self, text):
+        """Applies Rich formatting to text"""
+        text = re.sub(r"\\n", "\n", text)
+        text = re.sub(r"\*\*(.*?)\*\*", r"[bold]\1[/bold]", text)
+        text = re.sub(r"\*(.*?)\*", r"[italic]\1[/italic]", text)
+        text = re.sub(r"\~\~(.*?)\~\~", r"[strike]\1[/strike]", text)
+        text = re.sub(r"\_\_(.*?)\_\_", r"[underline]\1[/underline]", text)
+        return text
+
     def parse_markdown(self, filename):
         """Parses markdown file and randomizes the order of 
         cards within a set"""
         self.file = filename
         tmp_flashcards = []
-        tmp_question = None
-        tmp_answer = None
         with open(self.file, "r", encoding="utf-8") as file:
             markdown_text = file.read()
         current_question = None
@@ -35,24 +43,31 @@ class Flashcard:
             if match:
                 level = len(match.group(1))
                 title = match.group(2)
-                title = title.replace("\\n", "\n")
                 if level == 1:
-                    current_question = title
+                    current_question = self.apply_rich_format(title)
                 elif level == 2:
-                    current_answer = title
+                    current_answer = self.apply_rich_format(title)
                 if current_answer and current_question:
                     if re.match(r"^FIRST_CARD", current_question):
                         current_question = re.sub(r"^FIRST_CARD ", "", current_question)
-                        tmp_question = current_question
-                        tmp_answer = current_answer
-                    else:
                         tmp_flashcards.append(Flashcard(current_question, current_answer))
                         current_answer = None
+                    else:
+                        tmp_flashcards.append(Flashcard(current_question, current_answer))
+                        current_question = None
+                        current_answer = None
         random.shuffle(tmp_flashcards)
-        if tmp_question and tmp_answer:
-            tmp_flashcards.insert(0, Flashcard(tmp_question, tmp_answer))
         self.flashcards.extend(tmp_flashcards)
 
+    def remove_incorrect_sets(self, directory):
+        incorrect_file_path = os.path.join(directory, ".incorrect")
+        if os.path.exists(incorrect_file_path):
+            shutil.rmtree(incorrect_file_path)
+        else:
+            console = Console()
+            console.print(Text("\nYou have no incorrect sets to remove.\n"), justify="center", style="bold red")
+        os.sys.exit()
+ 
     def output_incorrect_cards(self):
         """Outputs incorrect cards into .incorrect directory 
         located in root dir used for classes"""
@@ -115,7 +130,7 @@ class Flashcard:
                 loop_over_one_card = True
                 while loop_over_one_card:
                     card = self.flashcards[i]
-                    card_details_text = Text(card.question if show_question else card.answer) # justify="center" to center align text
+                    card_details_text = card.question if show_question else card.answer # justify="center" to center align text
                     move_cursor_to_left_middle()
                     panel_title = f"Flashcard {i+1} of {total_flashcards}"
                     panel_subtitle = f"Question" if show_question else "Answer"
@@ -184,7 +199,7 @@ class Flashcard:
             for i, card in enumerate(self.flashcards, start=1):
                 answered_correctly = False
                 while not answered_correctly:  # Loop until the user answers correctly or quits
-                    card_details_text = Text(card.question)
+                    card_details_text = card.question
                     panel_title = f"Flashcard {i} of {total_flashcards}"
                     panel = Panel(card_details_text, title=panel_title, title_align="left", subtitle_align="right", border_style="bold blue", width=50, expand=to_expand)
                     console.print(Align.center(panel))
@@ -213,7 +228,7 @@ class Flashcard:
                             console.print(Text("\nOnly one letter is wrong! Try again"), justify="center", style="bold red")
                     else:
                         console.print(Text(f"❌"), justify="center", style="bold red")
-                        console.print(Text(f"The correct answer is, \"{og_answer}\""), justify="center", style="bold red")
+                        console.print(f"The correct answer is, \"{og_answer}\"", justify="center", style="green")
                         self.incorrect_answers.append(Flashcard(card.question, card_answer))
                         num_wrong += 1
                         answered_correctly = True

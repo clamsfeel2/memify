@@ -14,6 +14,14 @@ A simple to use flashcard command-line program.
 - Why publish?
   - My sister saw me using it and wanted access. :p
 
+# Sections
+
+- [Setup](#setup)
+- [Formatting Your Flashcards](#formatting-your-flashcards)
+- [Formatting Output](#formatting-output)
+
+## Setup
+
 In order for `memify` to work you must have a parent directory that holds each class and sets. For example, the structure should look something like this
 
 ```bash
@@ -35,6 +43,8 @@ Any file ending with `.md` will be considered a set, and `memify` will prompt yo
 **If a file does not end in `.md` it will be ignored.**
 
 Anything else within your set files will be ignored, so theoretically you could fill your sets with notes and have your questions and answers scattered throughout the notes, so you may study and then test yourself on key concepts all from the same file!
+
+## Formatting Your Flashcards
 
 The format in which to create flashcards is
 
@@ -81,17 +91,47 @@ other text
 ## Paris
 ```
 
-If you want to insert a newline in your output you may use `\n`. `memify` is not yet regex compliant, but it understands `\n`.
+## Formatting Output
+
+`memify` supports the following markdown syntax with a few of my own modifications...
+
+```bash
+# *This will be italics*
+## **This will be bold**
+
+# ~~This will be crossed out~~
+## __This text will be underlined__
+```
+
+If you want to insert a newline in your output you may use `\n`. For example this
+
+```bash
+# What is the capital of France?\na) Paris.\nb)Denver.\nc)Copenhagen.
+## a
+```
+
+Will be output as
+
+```bash
+What is the capital of France?
+a) Paris.
+b) Denver.
+c) Copenhagen.
+```
 
 ## Usage
 
 ```bash
-USAGE: memify [flag]
--h, --help            show this help message and exit
--s, --study           choose a flashcard set to study.
--q, --quiz            choose a flashcard set to quiz yourself on.
--f FILEPATH, --filepath FILEPATH
-                      specify full path to file which holds a set.
+usage: main.py [-h] [-s] [-q] [-r] [-f FILEPATH]
+
+options:
+  -h, --help            show this help message and exit
+  -s, --study           choose a flashcard set to study.
+  -q, --quiz            choose a flashcard set to quiz yourself on.
+  -r, --remove-incorrect
+                        remove all incorrect sets.
+  -f FILEPATH, --filepath FILEPATH
+                        specify full path to file which holds a set.
 ```
 
 ## Roadmap

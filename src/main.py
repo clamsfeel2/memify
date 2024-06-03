@@ -12,25 +12,29 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("-s", "--study", action="store_true", help="choose a flashcard set to study.")
         parser.add_argument("-q", "--quiz", action="store_true", help="choose a flashcard set to quiz yourself on.")
+        parser.add_argument("-r", "--remove-incorrect", action="store_true", help="remove all incorrect sets.")
         parser.add_argument("-f", "--filepath", type=str, help="specify full path to file which holds a set.")
         args = parser.parse_args()
 
-        if not (args.study or args.quiz):
+        if not (args.study or args.quiz or args.remove_incorrect):
             print("memify: missing operand")
-            print("   usage: memify [-h] [-s] [-q] [-f FILEPATH]")
+            print("   usage: memify [-h] [-s] [-q] [-r] [-f FILEPATH]")
             sys.exit(1)
 
         clear_screen()
         hide_cursor()
 
+        flcd = Flashcard("", "", False, False)
         if not args.filepath:
             directory = os.environ["FLASHCARD_SETS_PATH"]
+            if args.remove_incorrect:
+                flcd.remove_incorrect_sets(directory)
+                # os.sys.exit()
             directory = Menu.show_menu(directory)
         else:
             directory = args.directory
 
         basename = os.path.basename(os.path.dirname(os.path.dirname(directory)))
-        flcd = Flashcard("", "", False, False)
         if basename == ".incorrect":
             flcd.chose_incorrect = True
         flcd.parse_markdown(directory)
