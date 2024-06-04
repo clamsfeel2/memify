@@ -177,8 +177,10 @@ class Flashcard:
             console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
             user_answer = getch()
             if user_answer == "\r":
+                i = 0
                 wanna_play = True
                 clear_screen()
+                hide_cursor()
             else:
                 wanna_play = False
                 clear_screen()
