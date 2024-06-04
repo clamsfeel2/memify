@@ -26,7 +26,7 @@ A simple to use flashcard command-line program.
 
 In order for `memify` to work you must have a parent directory that holds each class and sets. For example, the structure should look something like this
 
-```bash
+```sh
 Flashcards
 ├── Math
 │   └── notes.md
@@ -73,7 +73,7 @@ more random text
 
 ***Just remember that a Question (a single `#`) must be followed by an Answer (a double `##`). So, this will result in an error***
 
-```bash
+```sh
 # What is the capital of France?
 # Paris
 
@@ -88,7 +88,7 @@ other text
 
 `memify` will always randomize the cards within your sets. If you want a set to **always** start with a certain card for instructions or whatever reason begin the question with `FIRST_CARD` for example
 
-```bash
+```sh
 # FIRST_CARD What is the capital of France?
 ## Paris
 ```
@@ -97,7 +97,7 @@ other text
 
 `memify` supports the following markdown syntax with a few of my own modifications...
 
-```bash
+```sh
 # *This will be italics*
 ## **This will be bold**
 
@@ -107,14 +107,14 @@ other text
 
 If you want to insert a newline in your output you may use `\n`. For example this
 
-```bash
+```sh
 # What is the capital of France?\na) Paris.\nb)Denver.\nc)Copenhagen.
 ## a
 ```
 
 Will be output as
 
-```bash
+```sh
 What is the capital of France?
 a) Paris.
 b) Denver.
@@ -123,7 +123,7 @@ c) Copenhagen.
 
 ## Usage
 
-```bash
+```sh
 usage: main.py [-h] [-s] [-q] [-r] [-f FILEPATH]
 
 options:
