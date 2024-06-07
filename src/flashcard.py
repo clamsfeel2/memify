@@ -3,31 +3,27 @@ import os
 import shutil
 import sys
 import random
-from helpers import is_num, clear_screen, hide_cursor, move_cursor_to_middle_of_screen, move_cursor_to_left_middle, getch, check_differences
-from rich.panel import Panel
-from rich.console import Console
-from rich.text import Text
-from rich.align import Align
+from helpers import is_num, clear_screen, hide_cursor, move_cursor_to_middle_of_screen, move_cursor_to_left_middle, getch, check_differences, display_centered_msg, display_panel, apply_rich_format
 
 class Flashcard:
     incorrect_answers = []
     flashcards = []
     file = None
 
-    def __init__(self, question, answer, no_incorrect_cards = False, chose_incorrect = False):
+    def __init__(self, question, answer, show_question = True, no_incorrect_cards = False, chose_incorrect = False):
         self.question = question
         self.answer = answer
+        self.show_question = show_question
         self.no_incorrect_cards = no_incorrect_cards
         self.chose_incorrect = chose_incorrect
 
-    def apply_rich_format(self, text):
-        """Applies Rich formatting to text"""
-        text = re.sub(r"\\n", "\n", text)
-        text = re.sub(r"\*\*(.*?)\*\*", r"[bold]\1[/bold]", text)
-        text = re.sub(r"\*(.*?)\*", r"[italic]\1[/italic]", text)
-        text = re.sub(r"\~\~(.*?)\~\~", r"[strike]\1[/strike]", text)
-        text = re.sub(r"\_\_(.*?)\_\_", r"[underline]\1[/underline]", text)
-        return text
+    def parse_flashcard_file(self, filepath):
+        """Parses the flashcard file based on its extension"""
+        _, file_extension = os.path.splitext(filepath)
+        if file_extension.lower() == ".md":
+            self.parse_markdown(filepath)
+        elif file_extension.lower() == ".csv":
+            self.parse_csv(filepath)
 
     def parse_markdown(self, filename):
         """Parses markdown file and randomizes the order of 
@@ -44,9 +40,9 @@ class Flashcard:
                 level = len(match.group(1))
                 title = match.group(2)
                 if level == 1:
-                    current_question = self.apply_rich_format(title)
+                    current_question = apply_rich_format(title)
                 elif level == 2:
-                    current_answer = self.apply_rich_format(title)
+                    current_answer = apply_rich_format(title)
                 if current_answer and current_question:
                     if re.match(r"^FIRST_CARD", current_question):
                         current_question = re.sub(r"^FIRST_CARD ", "", current_question)
@@ -59,13 +55,34 @@ class Flashcard:
         random.shuffle(tmp_flashcards)
         self.flashcards.extend(tmp_flashcards)
 
+    def parse_csv(self, filename):
+        """Parses CSV file and randomizes the order of cards within a set"""
+        self.file = filename
+        tmp_flashcards = []
+        first_card_flashcards = []
+        with open(self.file, "r", encoding="utf-8") as file:
+            combined_values = file.read().split(',')
+            for i in range(0, len(combined_values), 2):  # Iterate pairs of values
+                question = apply_rich_format(combined_values[i].strip())
+                answer = apply_rich_format(combined_values[i + 1].strip())
+                if question and answer:
+                    if re.match(r"^FIRST_CARD", question):
+                        question = re.sub(r"^FIRST_CARD ", "", question)
+                        first_card_flashcards.append(Flashcard(question, answer))
+                    else:
+                        tmp_flashcards.append(Flashcard(question, answer))
+        random.shuffle(tmp_flashcards)
+        # Make sure first_card is at the beginning of flashcards
+        self.flashcards = first_card_flashcards + tmp_flashcards
+
     def remove_incorrect_sets(self, directory):
+        """Currently removes every incorrect set that it finds"""
         incorrect_file_path = os.path.join(directory, ".incorrect")
         if os.path.exists(incorrect_file_path):
             shutil.rmtree(incorrect_file_path)
+            display_centered_msg("\nRemoved all incorrect sets :)\n", "bold spring_green1")
         else:
-            console = Console()
-            console.print(Text("\nYou have no incorrect sets to remove.\n"), justify="center", style="bold red")
+            display_centered_msg("\nYou have no incorrect sets to remove.\n", "bold red", 1) 
         os.sys.exit()
  
     def output_incorrect_cards(self):
@@ -73,7 +90,7 @@ class Flashcard:
         located in root dir used for classes"""
         existing_data = []
         fullpath_to_classes = os.path.dirname(os.path.dirname(self.file))
-        file_name = os.path.basename(self.file)
+        file_name = os.path.splitext(os.path.basename(self.file))[0] + ".md"
         incorrect_file_name = file_name if file_name.startswith("incorrect_") else "incorrect_" + file_name
         if os.path.basename(fullpath_to_classes) == ".incorrect":
             fullpath_to_classes = os.path.dirname(fullpath_to_classes)
@@ -96,7 +113,8 @@ class Flashcard:
 
         with open(incorrect_file_path, "w", encoding="utf-8") as out_file:
             for card in self.incorrect_answers:
-                quest = "# " + card.question
+                # quest = "# " + card.question
+                quest = "# " + card.question.replace("\n", "\\n")
                 ans = "## " + str(card.answer)
                 # Check if the question and answer pair already exist in the file
                 if any(quest in line and ans in line for line in existing_data):
@@ -106,46 +124,37 @@ class Flashcard:
 
     # TODO: Clean this function tf up
     def flashcard_study(self):
-        to_expand = True
-        show_question = True
-        console = Console()
+        i = 0
+        show_commands = False
         wanna_play = True
         total_flashcards = len(self.flashcards)
+        to_show_question = self.show_question
 
         clear_screen()
         hide_cursor()
         move_cursor_to_left_middle()
 
-        console.print(Align.center("Time to study some flashcards!", style="medium_purple"))
-        console.print(Align.center(f"[medium_purple underline]There are {total_flashcards} flashcards.[/medium_purple underline]"))
-        console.print(Align.center(f"[medium_purple underline]Press q to quit.[/medium_purple underline]"))
-        i = 0
-        show_commands = True
         while wanna_play:
             while i < total_flashcards:
                 key = None
                 if key == "q" or key == "Q":
                     return
-                show_question = True
                 loop_over_one_card = True
                 while loop_over_one_card:
                     card = self.flashcards[i]
-                    card_details_text = card.question if show_question else card.answer # justify="center" to center align text
+                    card_details_text = card.question if to_show_question else card.answer
                     move_cursor_to_left_middle()
                     panel_title = f"Flashcard {i+1} of {total_flashcards}"
-                    panel_subtitle = f"Question" if show_question else "Answer"
-                    border_color = "bold blue" if show_question else "bold pale_violet_red1"
-                    panel = Panel(card_details_text, title=panel_title, subtitle = panel_subtitle, title_align="left", subtitle_align="right", border_style=border_color, width=50, expand=to_expand)
-                    console.print(Align.center(panel))
+                    panel_subtitle = f"Question" if to_show_question else "Answer"
+                    border_color = "bold blue" if to_show_question else "bold pale_violet_red1"
+                    display_panel(card_details_text, panel_title, panel_subtitle, border_color)
                     if show_commands:
-                        console.print(Align.center("COMMANDS", style="bold turquoise2"))
-                        console.print(Align.center("'c' to toggle this menu", style="turquoise2"))
-                        console.print(Align.center("'any key' to flip the flashcard", style="turquoise2"))
-                        console.print(Align.center("'enter' to go to the next card", style="turquoise2"))
-                        console.print(Align.center("'b' to go to the previous card", style="turquoise2"))
-                        console.print(Align.center("'q' to quit", style="turquoise2"))
+                        display_centered_msg("COMMANDS", "turquoise2")
+                        display_centered_msg("'c' to toggle this menu", "turquoise2")
+                        display_centered_msg("'any key' to flip the flashcard", "turquoise2")
+                        display_centered_msg("'b' to go to the previous card", "turquoise2")
+                        display_centered_msg("'q' to quit", "turquoise2")
                     else:
-                        # move_cursor_to_left_middle(3)
                         print("\x1b[J", end="", flush=True) # Clears from cursor to bottom of screen
                     key = getch()
                     if key is None:
@@ -157,11 +166,12 @@ class Flashcard:
                         clear_screen()
                         hide_cursor()
                         i += 1
-                        loop_over_one_card = not loop_over_one_card
+                        loop_over_one_card = False
+                        to_show_question = True if self.show_question else False
                     elif key in {"b", "B"}:
                         if i > 0:
                             i -= 1
-                            loop_over_one_card = not loop_over_one_card
+                            loop_over_one_card = False
                     elif key in {"q", "Q"}:
                         clear_screen()
                         hide_cursor()
@@ -169,30 +179,29 @@ class Flashcard:
                     else:
                         clear_screen()
                         hide_cursor()
-                        show_question = not show_question
+                        to_show_question = not to_show_question
             clear_screen()
             hide_cursor()
             move_cursor_to_left_middle()
-            console.print(Align.center(Text("Study session completed! :)", justify="center"), style="bold spring_green1"))
-            console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
+            display_centered_msg("Study session completed! :)", "bold spring_green1")
+            display_centered_msg("\nPress 'ANY KEY' to study again or 'ENTER' to quit.", "bold")
             user_answer = getch()
             if user_answer == "\r":
+                wanna_play = False
+                clear_screen()
+                print("\x1b[H", end="", flush=True) # Move cursor back to top left of window
+            else:
                 i = 0
                 wanna_play = True
                 clear_screen()
                 hide_cursor()
-            else:
-                wanna_play = False
-                clear_screen()
-                print("\x1b[H", end="", flush=True) # Move cursor back to top left of window
 
     def flashcard_quiz(self):
         wanna_play = True
-        to_expand = True
         total_flashcards = len(self.flashcards)
-        console = Console()
         clear_screen()
-        console.print(Text(f"\nWelcome to the Flashcard Quiz! There are {total_flashcards} questions.\n"), justify="center", style="deep_sky_blue1")
+        display_centered_msg(f"\nWelcome to the Flashcard Quiz! There {'is' if total_flashcards == 1 else 'are'} {total_flashcards} question{'s' if total_flashcards > 1 else ''}.\n Press any key to continue", "bold deep_sky_blue1")
+        getch()
 
         while wanna_play: 
             num_correct = 0
@@ -201,15 +210,11 @@ class Flashcard:
             for i, card in enumerate(self.flashcards, start=1):
                 answered_correctly = False
                 while not answered_correctly:  # Loop until the user answers correctly or quits
-                    card_details_text = card.question
-                    panel_title = f"Flashcard {i} of {total_flashcards}"
-                    panel = Panel(card_details_text, title=panel_title, title_align="left", subtitle_align="right", border_style="bold blue", width=50, expand=to_expand)
-                    console.print(Align.center(panel))
+                    display_panel(card.question, f"Flashcard {i} of {total_flashcards}", "", "bold blue")
+                    display_centered_msg("Your answer\x1b[s", "")
+                    user_answer = input("\x1b[u: ").strip().lower() # \x1b[u restores cursor pos so I can have the input in the middle of screen
 
-                    console.print(Text("Your answer\x1b[s"), justify="center", end=""); # \x1b[s saves cursor pos
-                    user_answer = input("\x1b[u: ").strip().lower() # \x1b[u restores cursor pos so I can have the input in the middle of screen!
-
-                    og_answer = card.answer;
+                    og_answer = card.answer; # Saving to output og answer as card.answer is mutated within this method 
                     everything_is_num = is_num(user_answer) and is_num(card.answer)
                     if everything_is_num:
                         user_answer = int(user_answer)
@@ -218,35 +223,33 @@ class Flashcard:
                         user_answer = user_answer.lower()
                         card_answer = card.answer.lower()
                     if user_answer == card_answer:
-                        console.print(Text(f"Correct ✔️"), justify="center", style="bold spring_green1")
+                        display_centered_msg("Correct ✔️", "bold spring_green1")
                         num_correct += 1
                         answered_correctly = True
                     elif check_differences(user_answer, card_answer):
                         if everything_is_num:
                             clear_screen()
-                            console.print(Text("\nYou're within 3! Try again"), justify="center", style="bold red")
+                            display_centered_msg("You're within 3! Try again.", "bold red")
                         else:
                             clear_screen()
-                            console.print(Text("\nOnly one letter is wrong! Try again"), justify="center", style="bold red")
+                            display_centered_msg("Only one letter is wrong! Try again.", "bold red")
                     else:
-                        console.print(Text(f"❌"), justify="center", style="bold red")
-                        console.print(f"The correct answer is, \"{og_answer}\"", justify="center", style="green")
+                        display_centered_msg("❌", "bold red")
+                        display_centered_msg(f"The correct answer is, \"{og_answer}\"", "green")
                         self.incorrect_answers.append(Flashcard(card.question, card_answer))
                         num_wrong += 1
                         answered_correctly = True
-            console.print(Text("\nQuiz completed!"), justify="center", style="bold spring_green1")
-            content = (f"Number of correct answers: {num_correct}\n" + f"Number of incorrect answers: {num_wrong}")
-            console.print(Panel(content, title="Results", border_style="bold blue", expand=to_expand))
+            display_centered_msg("\nQuiz completed!", "bold spring_green1")
+            display_panel(f"Number of correct answers: {num_correct}\n" + f"Number of incorrect answers: {num_wrong}", "Results", "", "bold blue")
             self.output_incorrect_cards()
             if self.no_incorrect_cards and self.chose_incorrect:
-                console.print(Text("\nYou have no more incorrect flashcards!\n"), justify="center", style="bold spring_green1")
+                display_centered_msg("\nYou have no more incorrect flashcards!\n", "bold spring_green1")
                 wanna_play = False
             else:
                 hide_cursor()
-                # Gets user input, if they press enter they wanna quiz again
-                console.print(Text("\nPress ENTER to study again or ANY KEY to quit"), justify="center", end="", style="bold"); 
+                display_centered_msg("\nPress 'ANY KEY' to study again or 'ENTER' to quit", "bold")
                 user_answer = getch()
                 if user_answer == "\r":
-                    wanna_play = True
-                else:
                     wanna_play = False
+                else:
+                    wanna_play = True

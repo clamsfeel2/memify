@@ -2,6 +2,11 @@ import termios
 import tty
 import os
 import sys
+import re
+from rich.console import Console
+from rich.text import Text
+from rich.align import Align
+from rich.panel import Panel
 
 # This is kinda overkill I think...
 def is_num(x):
@@ -10,6 +15,30 @@ def is_num(x):
         return True
     except ValueError:
         return False
+
+### RICH HELPERS ###
+def display_centered_msg(msg, color, exit_code = None, to_center_hztl_vtcl = False):
+    console = Console()
+    move_cursor_to_left_middle() if to_center_hztl_vtcl else ""
+    console.print(Align.center(Text(msg, justify="center"), style=color))
+    if exit_code is not None:
+        sys.exit(exit_code)
+    else:
+        return 0
+
+def display_panel(panel_txt, title_txt, subtitle_txt, border_color):
+    console = Console()
+    panel = Panel(panel_txt, title = title_txt, subtitle = subtitle_txt, title_align="left", subtitle_align="right", border_style=border_color, width=50)
+    console.print(Align.center(panel))
+
+def apply_rich_format(text):
+    """Applies Rich formatting to text"""
+    text = re.sub(r"\\n", "\n", text)
+    text = re.sub(r"\*\*(.*?)\*\*", r"[bold]\1[/bold]", text)
+    text = re.sub(r"\*(.*?)\*", r"[italic]\1[/italic]", text)
+    text = re.sub(r"\~\~(.*?)\~\~", r"[strike]\1[/strike]", text)
+    text = re.sub(r"\_\_(.*?)\_\_", r"[underline]\1[/underline]", text)
+    return text
 
 ### MANIPULATING SCREEN AND INPUT ###
 def clear_screen():
@@ -28,11 +57,11 @@ def move_cursor_to_middle_of_screen():
     # Move cursor to the middle of the screen on the farthest left side
     print(f"\x1b[{horizontal_position};{vertical_position}", end="", flush=True)
 
-def move_cursor_to_left_middle(value_to_move_down_by = 0):
+def move_cursor_to_left_middle():
     terminal_size = os.get_terminal_size()
     terminal_height = terminal_size.lines
     # Calculate the position for the cursor
-    vertical_position = (terminal_height // 2) + value_to_move_down_by
+    vertical_position = (terminal_height // 2)
     # Move cursor to the middle of the screen on the farthest left side
     print(f"\x1b[{vertical_position};0H", end="", flush=True)
 
