@@ -10,7 +10,7 @@ from menu import Menu
 def main():
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument("-s", "--study", nargs='?', const="None", default=False, choices=["None", "flipped", "f"], metavar="flipped/f", help="choose a flashcard set to study. Supply 'flipped' or 'f' argument to start the cards with the back 'up'.")
+        parser.add_argument("-s", "--study", nargs='?', const="None", default=False, choices=["None", "flipped", "f"], metavar="f/flipped", help="choose a flashcard set to study. Supply 'f' or 'flipped' argument to start the cards with the back 'up'.")
         parser.add_argument("-q", "--quiz", action="store_true", help="choose a flashcard set to quiz yourself on.")
         parser.add_argument("-r", "--remove-incorrect", action="store_true", help="remove all incorrect sets.")
         parser.add_argument("-p", "--path", type=str, help="specify full path to file which holds a set.")

@@ -146,12 +146,12 @@ c) Copenhagen.
 ## Usage
 
 ```
-usage: memify [-h] [-s [flipped/f]] [-q] [-r] [-p PATH]
+usage: main.py [-h] [-s [f/flipped]] [-q] [-r] [-p PATH]
 
 options:
   -h, --help            show this help message and exit
-  -s [flipped/f], --study [flipped/f]
-                        choose a flashcard set to study. Supply 'flipped' or 'f' argument to start the cards with the back 'up'.
+  -s [f/flipped], --study [f/flipped]
+                        choose a flashcard set to study. Supply 'f or flipped' argument to start the cards with the back 'up'.
   -q, --quiz            choose a flashcard set to quiz yourself on.
   -r, --remove-incorrect
                         remove all incorrect sets.
