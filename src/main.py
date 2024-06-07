@@ -2,7 +2,6 @@
 
 import sys
 import os
-from os import environ
 import argparse
 from flashcard import Flashcard
 from helpers import clear_screen, hide_cursor, display_centered_msg, move_cursor_to_left_middle
@@ -27,7 +26,7 @@ def main():
 
         flcd = Flashcard("", "")
         if not args.path:
-            if environ.get("FLASHCARD_SETS_PATH") is None:
+            if os.environ.get("FLASHCARD_SETS_PATH") is None:
                 display_centered_msg("Please set FLASHCARD_SETS_PATH environment variable to the full path of your flashcards", "bold red", 1)
             directory = os.environ["FLASHCARD_SETS_PATH"]
             if not os.path.isdir(directory):
