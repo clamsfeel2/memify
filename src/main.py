@@ -15,10 +15,8 @@ def main():
         parser.add_argument("-r", "--remove-incorrect", action="store_true", help="remove all incorrect sets.")
         parser.add_argument("-p", "--path", type=str, help="specify full path to file which holds a set.")
         args = parser.parse_args()
-
         if not (args.study or args.quiz or args.remove_incorrect):
-            print("memify: missing operand")
-            print("   usage: memify [-h] [-s] [-q] [-r] [-p FILEPATH]")
+            parser.print_help()
             sys.exit(1)
 
         clear_screen()
