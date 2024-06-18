@@ -12,7 +12,6 @@ A simple to use flashcard command-line program.
 - [Setup](#setup)
 - [Formatting Your Flashcards](#formatting-your-flashcards)
     - [Using `.md` Sets](#instructions-for-sets-using-md)
-    - [Using `.csv` Sets](#instructions-for-sets-using-csv)
     - [Specify First Card](#specify-a-card-to-always-be-shown-first)
 - [Styling Output](#styling-output)
 
@@ -36,7 +35,7 @@ Flashcards
 ├── CS
 │   └── bash_test_cmd.md
 └── English
-    └── zara_class.md
+    └── reading_cards.md
 ```
 
 >[!IMPORTANT]
@@ -44,10 +43,6 @@ Flashcards
 > So for above `FLASHCARD_SETS_PATH` would be set as the full path to `Flashcards`.
 
 ## Formatting Your Flashcards
-
-`memify` currently accepts two types of files: `.md` and `.csv`.
-
-### Instructions For Sets Using `.md`
 
 ```
 Anything following '#' will be considered a `Question`
@@ -87,18 +82,6 @@ other text
 
 Anything else within your `.md` set files will be ignored, so theoretically you could fill these sets with notes and have your questions and answers scattered throughout the notes, so you may study and then test yourself on key concepts all from the same file!
 
-### Instructions For Sets Using `.csv`
-
-The format in `.csv` files must be
-
-```
-Question, Answer, Question, Answer,...
-
-For example,
-
-What is the capital of France?, Paris, Memify will help me learn **everything**?, true
-```
-
 ***You may have linebreaks and you may omit whitespace***
 
 ### Specify A Card To Always Be Shown First
@@ -114,8 +97,6 @@ What is the capital of France?, Paris, Memify will help me learn **everything**?
 
 >[!WARNING]
 > As a general rule: **do not** apply any of these to your answers or else you will have a bad time in `memify --quiz`
-
-***ALL OF THESE EXAMPLES ARE SHOWN IN `.md`, BUT CAN BE USED THE EXACT SAME WAY IN YOUR `.csv` SETS***
 
 `memify` supports the following markdown syntax with a few of my own modifications...
 
