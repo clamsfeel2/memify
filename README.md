@@ -9,6 +9,7 @@ A simple to use flashcard command-line program.
 ## Sections
 
 - [Why](#why)
+- [Installation](#installation)
 - [Setup](#setup)
 - [Formatting Your Flashcards](#formatting-your-flashcards)
     - [Using `.md` Sets](#instructions-for-sets-using-md)
@@ -23,6 +24,36 @@ A simple to use flashcard command-line program.
 - Why publish?
   - My sister saw me using it and wanted access. :p
 
+
+## Installation
+
+**Clone repo**
+
+```bash
+git clone git@github.com:clamsfeel2/memify.git
+```
+
+***You have three ways to install:***
+
+**Using `pipx`**
+
+```python
+pipx install .
+```
+
+**Using `pip`**
+
+```python
+pip install .
+```
+
+**Symlink**
+
+*Must be in root of git repo directory*
+
+```bash
+ln -s src/main.py /somewhere/in/your/path
+```
 
 ## Setup
 
