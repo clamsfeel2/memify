@@ -11,7 +11,7 @@ setup(
     description='A brief description of my package',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    author='clamsfeel2',
+    authors = [ { name="clamsfeel2", email="clamsfeel@proton.me" }, ]
     url='https://github.com/clamsfeel2/memify',
     license='GPL 3.0',
 )
