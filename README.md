@@ -6,16 +6,6 @@ A simple to use flashcard command-line program.
 
 </div>
 
-## Sections
-
-- [Why](#why)
-- [Installation](#installation)
-- [Setup](#setup)
-- [Formatting Your Flashcards](#formatting-your-flashcards)
-    - [Using `.md` Sets](#instructions-for-sets-using-md)
-    - [Specify First Card](#specify-a-card-to-always-be-shown-first)
-- [Styling Output](#styling-output)
-
 ### Why?
 
 - I started to get frustrated with how long it would take me to setup a Quizlet set, or kept losing my handwritten flashcards.
