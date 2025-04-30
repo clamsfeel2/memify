@@ -1,17 +1,28 @@
 from setuptools import setup, find_packages
+from pathlib import Path
+
+here = Path(__file__).parent
 
 setup(
     name='memify',
     version='0.1.0',
-    packages=find_packages(where='src'),
     package_dir={'': 'src'},
-    install_requires=[ 'rich', 'simple_term_menu' ],
-    entry_points={ 'console_scripts': [ 'memify=main:main', ], },
+    packages=find_packages(where='src'),
+    py_modules=['main','flashcard','helpers','menu'],
+    install_requires=[
+        'rich',
+        'simple_term_menu',
+    ],
+    entry_points={
+        'console_scripts': [
+            'memify=main:main',
+        ],
+    },
     python_requires='>=3.6',
     description='A simple CLI flashcard tool.',
-    long_description=open('README.md').read(),
+    long_description=(here / 'README.md').read_text(encoding='utf-8'),
     long_description_content_type='text/markdown',
-    authors = [ { name="clamsfeel2", email="clamsfeel@proton.me" }, ]
+    author='clamsfeel2',
     url='https://github.com/clamsfeel2/memify',
-    license='GPL 3.0',
+    license='MIT',
 )
