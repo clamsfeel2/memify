@@ -8,12 +8,9 @@ A simple to use flashcard command-line program.
 
 ### Why?
 
-- I started to get frustrated with how long it would take me to setup a Quizlet set, or kept losing my handwritten flashcards.
-  - really just wanted a **super simple** flashcard program that allowed me to create sets and study the sets with minimal effort. After all, shouldn't that effort be used for the actual studying?!
-- I didn't know a thing about Python and wanted to learn. The codebase is very messy because of this...
+- I was spending more time setting up Quizlet than studying so I wanted a simpler solution.
 - Why publish?
   - My sister saw me using it and wanted access. :p
-
 
 ## Installation
 
