@@ -8,7 +8,7 @@ setup(
     install_requires=[ 'rich', 'simple_term_menu' ],
     entry_points={ 'console_scripts': [ 'memify=main:main', ], },
     python_requires='>=3.6',
-    description='A brief description of my package',
+    description='A simple CLI flashcard tool.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     authors = [ { name="clamsfeel2", email="clamsfeel@proton.me" }, ]
