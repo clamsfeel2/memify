@@ -8,6 +8,7 @@ from rich.text import Text
 from rich.align import Align
 from rich.panel import Panel
 
+console = Console()
 # This is kinda overkill I think...
 def is_num(x):
     try:
@@ -17,17 +18,15 @@ def is_num(x):
         return False
 
 ### RICH HELPERS ###
-def display_centered_msg(msg, color, exit_code = None, to_center_hztl_vtcl = False):
-    console = Console()
-    move_cursor_to_left_middle() if to_center_hztl_vtcl else ""
-    console.print(Align.center(Text(msg, justify="center"), style=color))
-    if exit_code is not None:
+def display_centered_msg(msg, color, exit_code = -1, add_newline = False):
+    new_msg = ("\n\n" + msg + "\n\n") if add_newline else msg
+    console.print(Align.center(Text(new_msg, justify="center"), style=color))
+    if exit_code >= 0:
         sys.exit(exit_code)
     else:
         return 0
 
 def display_panel(panel_txt, title_txt, subtitle_txt, border_color):
-    console = Console()
     panel = Panel(panel_txt, title = title_txt, subtitle = subtitle_txt, title_align="left", subtitle_align="right", border_style=border_color, width=50)
     console.print(Align.center(panel))
 
@@ -64,6 +63,12 @@ def move_cursor_to_left_middle():
     vertical_position = (terminal_height // 2)
     # Move cursor to the middle of the screen on the farthest left side
     print(f"\x1b[{vertical_position};0H", end="", flush=True)
+
+def cls_hide_mvcrsr(x = False):
+    clear_screen()
+    hide_cursor()
+    if x:
+        move_cursor_to_left_middle()
 
 def getch():
     fd = sys.stdin.fileno()
