@@ -14,33 +14,36 @@ A simple to use flashcard command-line program.
 
 ## Installation
 
-**Clone repo**
+**Clone the repo**
 
 ```bash
 git clone git@github.com:clamsfeel2/memify.git
+cd memify
 ```
 
-***You have three ways to install:***
+### Using `pipx` (recommended)
 
-**Using `pipx`**
-
-```python
+```bash
 pipx install .
 ```
 
-**Using `pip`**
+You can now run `memify -h` from **anywhere**.
 
-```python
-pip install .
-```
-
-**Symlink**
-
-*Must be in root of git repo directory*
+### Using `poetry`
 
 ```bash
-ln -s src/main.py /somewhere/in/your/path
+poetry install
 ```
+
+To run the program:
+
+```bash
+poetry run memify -h
+```
+
+> [!NOTE]
+> The `memify` command will **not** be available globally unless you use `poetry run`.
+> If you want the command globally without `poetry run`, use `pipx` instead.
 
 ## Setup
 
