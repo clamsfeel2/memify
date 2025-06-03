@@ -42,7 +42,8 @@ poetry run memify -h
 ```
 
 > [!NOTE]
-> The `memify` command will **not** be available globally unless you use `poetry run`.
+> `memify` will **not** be available globally unless you use `poetry run`.
+>
 > If you want the command globally without `poetry run`, use `pipx` instead.
 
 ## Setup
