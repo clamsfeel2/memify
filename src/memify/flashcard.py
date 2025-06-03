@@ -67,15 +67,15 @@ class FlashcardSet:
             display_centered_msg("\nNo incorrect sets found.\n", "bold red", 1)
         sys.exit()
 
-    def __save_incorrect_cards(self):
+    def _save_incorrect_cards(self):
         if not self.incorrect_cards:
-            self.__remove_existing_incorrect_file()
+            self._remove_existing_incorrect_file()
             self.no_incorrect = True
             return
 
-        incorrect_dir = self.__get_incorrect_dir()
+        incorrect_dir = self._get_incorrect_dir()
         os.makedirs(incorrect_dir, exist_ok=True)
-        incorrect_file = self.__get_incorrect_file_path(incorrect_dir)
+        incorrect_file = self._get_incorrect_file_path(incorrect_dir)
 
         existing_entries = set()
         if os.path.isfile(incorrect_file):
@@ -89,13 +89,13 @@ class FlashcardSet:
                     f.write(entry)
         self.incorrect_cards = []
 
-    def __remove_existing_incorrect_file(self):
-        incorrect_dir = self.__get_incorrect_dir()
-        incorrect_file = self.__get_incorrect_file_path(incorrect_dir)
+    def _remove_existing_incorrect_file(self):
+        incorrect_dir = self._get_incorrect_dir()
+        incorrect_file = self._get_incorrect_file_path(incorrect_dir)
         if os.path.isfile(incorrect_file):
             os.remove(incorrect_file)
 
-    def __get_incorrect_dir(self):
+    def _get_incorrect_dir(self):
         if not self.filepath or not isinstance(self.filepath, str):
             raise ValueError("FlashcardSet.filepath is not set. Cannot determine incorrect directory.")
         base_dir = os.path.dirname(os.path.dirname(self.filepath))
@@ -104,7 +104,7 @@ class FlashcardSet:
             base_dir = os.path.dirname(base_dir)
         return os.path.join(base_dir, ".incorrect", set_dir)
 
-    def __get_incorrect_file_path(self, incorrect_dir):
+    def _get_incorrect_file_path(self, incorrect_dir):
         if not self.filepath or not isinstance(self.filepath, str):
             raise ValueError("FlashcardSet.filepath is not set. Cannot determine incorrect file path.")
         base_name = os.path.splitext(os.path.basename(self.filepath))[0]
@@ -134,7 +134,7 @@ class FlashcardSet:
                     border = "bold blue" if show_question else "bold pale_violet_red1"
                     display_panel(card.question if show_question else card.answer, panel_title, panel_subtitle, border)
                     if show_help_menu:
-                        self.__show_study_help()
+                        self._show_study_help()
                     key = getch()
                     if key is None: raise KeyboardInterrupt
                     if key in {"c", "C", "?"}:
@@ -154,7 +154,7 @@ class FlashcardSet:
                     else:
                         show_question = not show_question
                         clear_screen()
-            self.__study_complete()
+            self._study_complete()
             key = getch()
             if key is None: raise KeyboardInterrupt
             elif key == "\r":
@@ -165,7 +165,7 @@ class FlashcardSet:
                 repeat_study = False
                 clear_screen()
 
-    def __show_study_help(self):
+    def _show_study_help(self):
         display_centered_msg("Help", "turquoise2")
         display_centered_msg("'c' to toggle help", "turquoise2")
         display_centered_msg("'n' or 'ENTER' next card", "turquoise2")
@@ -173,7 +173,7 @@ class FlashcardSet:
         display_centered_msg("Any other key: flip card", "turquoise2")
         display_centered_msg("'q' quit", "turquoise2")
 
-    def __study_complete(self):
+    def _study_complete(self):
         clear_screen()
         hide_cursor()
         move_cursor_to_left_middle()
@@ -217,7 +217,7 @@ class FlashcardSet:
                         break
             display_centered_msg("\nQuiz completed!", "bold spring_green1")
             display_panel(f"Correct: {num_correct}\nIncorrect: {num_incorrect}", "Results", "", "bold blue")
-            self.__save_incorrect_cards()
+            self._save_incorrect_cards()
             if self.no_incorrect and self.is_incorrect_set:
                 display_centered_msg("\nNo more incorrect flashcards!\n", "bold spring_green1")
                 repeat_quiz = False
@@ -237,9 +237,9 @@ class MarkdownFlashcardSet(FlashcardSet):
     def __init__(self, filepath):
         super().__init__()
         self.filepath = filepath
-        self.__parse_markdown(filepath)
+        self._parse_markdown(filepath)
 
-    def __parse_markdown(self, filepath):
+    def _parse_markdown(self, filepath):
         with open(filepath, encoding="utf-8") as file:
             lines = file.read().splitlines()
         question, answer = None, None
@@ -264,9 +264,9 @@ class CSVFlashcardSet(FlashcardSet):
     def __init__(self, filepath):
         super().__init__()
         self.filepath = filepath
-        self.__parse_csv(filepath)
+        self._parse_csv(filepath)
 
-    def __parse_csv(self, filepath):
+    def _parse_csv(self, filepath):
         with open(filepath, encoding="utf-8") as file:
             values = [v.strip() for v in file.read().split(',')]
         first_cards = []
