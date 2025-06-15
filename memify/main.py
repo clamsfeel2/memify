@@ -6,13 +6,15 @@ import argparse
 from memify.flashcard import FlashcardSet
 from memify.helpers import clear_screen, hide_cursor, display_centered_msg
 
+__version__ = "0.1.1"
+
 def main():
     parser = argparse.ArgumentParser(description="Simple command-line flashcard program", formatter_class=lambda prog: argparse.HelpFormatter(prog, width=100, max_help_position=35))
     parser.add_argument("-s", "--study", nargs='?', const="None", default=False, choices=["None", "flipped", "f"], metavar="f/flipped", help="choose a flashcard set to study. Use 'f' or 'flipped' for back-first.")
     parser.add_argument("-q", "--quiz", action="store_true", help="quiz yourself on a flashcard set.")
     parser.add_argument("-r", "--remove-incorrect", action="store_true", help="remove all incorrect sets.")
     parser.add_argument("-p", "--path", type=str, help="path to set file or flashcard root directory.")
-    parser.add_argument("-v", "--version", action="version", version="memify v0.1.0")
+    parser.add_argument("-v", "--version", action="version", version=f"memify v{__version__}")
     args = parser.parse_args()
 
     if not (args.study or args.quiz or args.remove_incorrect):

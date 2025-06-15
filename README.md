@@ -21,7 +21,7 @@ git clone git@github.com:clamsfeel2/memify.git
 cd memify
 ```
 
-### Using `pipx` (recommended)
+With [pipx](https://pipx.pypa.io/) -- *what I use*:
 
 ```bash
 pipx install .
@@ -29,22 +29,26 @@ pipx install .
 
 You can now run `memify -h` from **anywhere**.
 
-### Using `poetry`
+With [uv](https://docs.astral.sh/uv/getting-started/installation/):
+
+```bash
+uv venv       # Create virtual environment
+uv sync       # Install dependencies
+uv run memify # Run memify
+```
+
+With [Poetry](https://python-poetry.org/)
 
 ```bash
 poetry install
-```
-
-To run the program:
-
-```bash
-poetry run memify -h
+poetry run memify # Run from poetry shell
+ln -s "$(poetry env info --path)/bin/memify" /somewhere/in/your/path/gb # Symlink to somewhere in your path instead
 ```
 
 > [!NOTE]
 > `memify` will **not** be available globally unless you use `poetry run`.
 >
-> If you want the command globally without `poetry run`, use `pipx` instead.
+> If you want the command globally without `poetry run`, use `pipx` or `uv` instead.
 
 ## Setup
 
